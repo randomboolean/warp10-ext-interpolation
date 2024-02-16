@@ -1,5 +1,5 @@
 //
-//   Copyright 2019 - 2021  SenX S.A.S.
+//   Copyright 2019 - 2023  SenX S.A.S.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.0.0'
-    id 'net.nemerosa.versioning' version '2.14.0'
     id 'io.codearte.nexus-staging' version '0.22.0'
     id 'java'
     id 'java-library'
@@ -29,8 +28,7 @@ plugins {
 project.group = 'io.warp10'
 project.description = 'Advanced interpolation functionalities'
 
-// If the current tag is set, then it's a new release. Don't add build number
-project.version = versioning.info.lastTag + ((versioning.info.tag != null) ? '' : '-' + versioning.info.build)
+project.version = getVersionFromGit()
 
 //
 // Repositories for the project dependencies
@@ -56,10 +54,10 @@ dependencies {
 
   // Use JUnit test framework.
   testImplementation 'junit:junit:4.13'
-  testImplementation group: 'io.warp10', name: 'warp10', version: '2.10.1'
+  testImplementation group: 'io.warp10', name: 'warp10', version: '3.+'
 
   // Compile time only dependencies, not used at runtime, or provided by other dependencies.
-  compileOnly group: 'io.warp10', name: 'warpscript', version: '2.10.1'
+  compileOnly group: 'io.warp10', name: 'warpscript', version: '3.+'
 }
 
 sourceSets {
@@ -261,5 +259,20 @@ if (project.hasProperty('signing.gnupg.keyName')) {
     signing {
         useGpgCmd()
         sign publishing.publications
+    }
+}
+
+def getVersionFromGit() {
+    def nogit = System.getProperty("nogit")
+    if (null != nogit) {
+        // Override version with the property value. To remove the version altogether use '-Dnogit' without value.
+        return nogit
+    } else {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--tags', '--always'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
     }
 }
