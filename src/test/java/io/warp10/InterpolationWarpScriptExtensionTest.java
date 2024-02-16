@@ -17,12 +17,13 @@
 package io.warp10;
 
 import io.warp10.ext.interpolation.InterpolationWarpScriptExtension;
-import io.warp10.ext.interpolation.MICROSPHEREFIT;
-import io.warp10.ext.interpolation.TRICUBICFIT;
+import io.warp10.ext.interpolation.InterpolatorMicrosphere;
+import io.warp10.ext.interpolation.InterpolatorMicrosphere.*;
+import io.warp10.ext.interpolation.InterpolatorTricubic;
+import io.warp10.ext.interpolation.InterpolatorTricubic.*;
 import io.warp10.script.MemoryWarpScriptStack;
 import io.warp10.script.WarpScriptLib;
 import io.warp10.script.WarpScriptStackFunction;
-import io.warp10.script.ext.inventory.InventoryWarpScriptExtension;
 import io.warp10.script.ext.token.TokenWarpScriptExtension;
 import io.warp10.standalone.Warp;
 import org.apache.commons.math3.analysis.MultivariateFunction;
@@ -39,9 +40,10 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static io.warp10.ext.interpolation.InterpolationWarpScriptExtension.INTERPOLATOR_3D_TRICUBIC;
 
 public class InterpolationWarpScriptExtensionTest {
 
@@ -106,7 +108,7 @@ public class InterpolationWarpScriptExtensionTest {
     stack.push(zlist);
     stack.push(fvalTensor);
 
-    ((WarpScriptStackFunction) ext.getFunctions().get(TRICUBICFIT.class.getSimpleName())).apply(stack);
+    ((WarpScriptStackFunction) ext.getFunctions().get(INTERPOLATOR_3D_TRICUBIC)).apply(stack);
     WarpScriptStackFunction function = (WarpScriptStackFunction) stack.pop();
 
     List<Number> input = new ArrayList<>();
@@ -191,7 +193,7 @@ public class InterpolationWarpScriptExtensionTest {
     stack.push(zlist);
     stack.push(fvalTensor);
 
-    ((WarpScriptStackFunction) ext.getFunctions().get(TRICUBICFIT.class.getSimpleName())).apply(stack);
+    ((WarpScriptStackFunction) ext.getFunctions().get(INTERPOLATOR_3D_TRICUBIC)).apply(stack);
     WarpScriptStackFunction function = (WarpScriptStackFunction) stack.pop();
 
     List<Number> input = new ArrayList<>();
@@ -266,7 +268,7 @@ public class InterpolationWarpScriptExtensionTest {
 
     stack.push(x);
     stack.push(y);
-    WarpConfig.setProperty(MICROSPHEREFIT.CONFIG_OR_CAPNAME_MAX_ELEMENTS, "100");
+    WarpConfig.setProperty(InterpolatorMicrosphere.CONFIG_OR_CAPNAME_MAX_ELEMENTS, "100");
     stack.execMulti("{ 'elements' 100 'exponent' 1.1 } MICROSPHEREFIT");
     Object func = stack.pop();
 
@@ -403,7 +405,6 @@ public class InterpolationWarpScriptExtensionTest {
     // Built-in extensions and plugins
     //
 
-    WarpScriptLib.register(new InventoryWarpScriptExtension());
     //WarpScriptLib.register(new HttpWarpScriptExtension());
 
     while(null == Warp.getKeyStore()) {}
