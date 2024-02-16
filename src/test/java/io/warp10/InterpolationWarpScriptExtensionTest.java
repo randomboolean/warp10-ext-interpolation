@@ -338,8 +338,8 @@ public class InterpolationWarpScriptExtensionTest {
   @Test
   public void startTestingWarp10Platform() throws Exception {
 
-    final String HOME = "/home/jenx/Softwares/warp10-standalone/";
-    //final String HOME = "/home/jenx/Softwares/warp10-dev/";
+    //final String HOME = "/home/jenx/Softwares/warp10-standalone/";
+    final String HOME = "/home/jenx/Softwares/warp10-dev/";
 
     //
     // Base configuration
@@ -354,6 +354,7 @@ public class InterpolationWarpScriptExtensionTest {
 
     String extraConfPath = HOME + "etc/conf.d/99-extra.conf";
     FileWriter fr = new FileWriter(new File(extraConfPath));
+    fr.write("backend = leveldb\n");
     fr.write("warp.timeunits = us\n");
     fr.close();
     conf.add(extraConfPath);
@@ -407,15 +408,16 @@ public class InterpolationWarpScriptExtensionTest {
 
     //WarpScriptLib.register(new HttpWarpScriptExtension());
 
-    while(null == Warp.getKeyStore()) {}
-    WarpScriptLib.register(new TokenWarpScriptExtension(Warp.getKeyStore())); //null exception, must be loaded with config file
-    System.out.println("Loaded Token extension");
+    //while(null == Warp.getKeyStore()) {}
+    //WarpScriptLib.register(new TokenWarpScriptExtension(Warp.getKeyStore())); //null exception, must be loaded with config file
+    //System.out.println("Loaded Token extension");
 
     //
     // Extensions and plugins from the classpath
     //
 
     WarpScriptLib.register(new InterpolationWarpScriptExtension());
+    System.out.println("Loaded Interpolation Extension");
 
     //
     // Let Warp10 run
